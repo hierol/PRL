@@ -9,8 +9,8 @@ const char* password = "12345678"; // Hasło musi mieć min. 8 znaków
 
 // Ustawienia PCA9685
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
-#define SERVOMIN 100  // Minimalna szerokość impulsu
-#define SERVOMAX 500  // Maksymalna szerokość impulsu
+#define SERVOMIN 205  // Minimalna szerokość impulsu
+#define SERVOMAX 409  // Maksymalna szerokość impulsu
 #define SERVO_FREQ 50 // Częstotliwość dla serw
 
 // Kanały PCA9685 dla 6 serw
@@ -36,6 +36,7 @@ void handleRoot() {
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kontrola Serw ESP32 & PCA9685</title>
 <style>
