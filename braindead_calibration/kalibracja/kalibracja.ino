@@ -7,9 +7,14 @@
 #define USMAX  2400
 #define SERVO_FREQ 50
 
-int cPulse1 = 250;
-int cPulse2 = 250;
-int cPulse3 = 250;
+int change = 0;
+
+int cPulse0 = 300;
+int cPulse1 = 300;
+int cPulse2 = 300;
+int cPulse3 = 300;
+
+int c_channel = 0;
 
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
@@ -32,33 +37,64 @@ void setup() {
   pinMode(25, INPUT_PULLUP);
   pinMode(33, INPUT_PULLUP);
   pinMode(32, INPUT_PULLUP);
+  pinMode(27, INPUT_PULLUP);
+
+  for (int j=0; j<4; j++) {pwm.setPWM(j, 0, 300);}
 
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   //Serial.println(digitalRead(32));
-  if (digitalRead(26) == LOW) {
-    cPulse1 += 1;
-    Serial.println(cPulse1);
-    delay(300);
-  }
-  else if (digitalRead(25) == LOW) {
-    cPulse1 += 10;
-    Serial.println(cPulse1);
-    delay(300);
-  }
-  else if (digitalRead(33) == LOW) {
-    cPulse1 -= 1;
-    Serial.println(cPulse1);
-    delay(300);
-  }
-  else if (digitalRead(32) == LOW) {
-    cPulse1 -= 10;
-    Serial.println(cPulse1);
+  if (digitalRead(27) == LOW) {
+    c_channel++;
+    if (c_channel > 3) {c_channel=0;}
+    Serial.print("Kanał serwa zmieniony na "); Serial.println(c_channel);
     delay(300);
   }
 
-  pwm.setPWM(5, 0, cPulse1); // kalibracja wybranego serwa
+
+  if (digitalRead(26) == LOW) {
+    change += 1;
+    Serial.println(change);
+    delay(300);
+  }
+  else if (digitalRead(25) == LOW) {
+    change += 10;
+    Serial.println(change);
+    delay(300);
+  }
+  else if (digitalRead(33) == LOW) {
+    change -= 1;
+    Serial.println(change);
+    delay(300);
+  }
+  else if (digitalRead(32) == LOW) {
+    change -= 10;
+    Serial.println(change);
+    delay(300);
+  }
+
+  if (c_channel == 0) {
+    cPulse0 += change;
+    pwm.setPWM(c_channel, 0, cPulse0);
+    if(change!=0) {Serial.print("Sygnał serwa "); Serial.print(c_channel); Serial.print(" zmieniony na "); Serial.println(cPulse0);}
+  } else if (c_channel == 1) {
+    cPulse1 += change;
+    pwm.setPWM(c_channel, 0, cPulse1);
+    if(change!=0) {Serial.print("Sygnał serwa "); Serial.print(c_channel); Serial.print(" zmieniony na "); Serial.println(cPulse1);}
+  } else if (c_channel == 2) {
+    cPulse2 += change;
+    pwm.setPWM(c_channel, 0, cPulse2);
+    if(change!=0) {Serial.print("Sygnał serwa "); Serial.print(c_channel); Serial.print(" zmieniony na "); Serial.println(cPulse2);}
+  } else if (c_channel == 3) {
+    cPulse3 += change;
+    pwm.setPWM(c_channel, 0, cPulse3);
+    if(change!=0) {Serial.print("Sygnał serwa "); Serial.print(c_channel); Serial.print(" zmieniony na "); Serial.println(cPulse3);}
+  }
+  
+
+  //pwm.setPWM(c_channel, 0, cPulse1); // kalibracja wybranego serwa
+  change = 0;
 
 }
