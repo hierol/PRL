@@ -9,8 +9,8 @@ const char* password = "12345678"; // Hasło musi mieć min. 8 znaków
 
 // Ustawienia PCA9685
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
-#define SERVOMIN 205  // Minimalna szerokość impulsu
-#define SERVOMAX 409  // Maksymalna szerokość impulsu
+#define SERVOMIN 114  // Minimalna szerokość impulsu
+#define SERVOMAX 644  // Maksymalna szerokość impulsu
 #define SERVO_FREQ 50 // Częstotliwość dla serw
 
 // Kanały PCA9685 dla 6 serw
@@ -26,7 +26,7 @@ WebServer server(80);
 
 // Funkcja pomocnicza do ustawiania kąta serwa
 void setServoAngle(uint8_t servo_num, int angle) {
-  int pulse = map(angle, -180, 180, SERVOMIN, SERVOMAX);
+  int pulse = map(angle, 0, 180, SERVOMIN, SERVOMAX);
   pwm.setPWM(servo_num, 0, pulse);
 }
 
@@ -52,8 +52,8 @@ void handleRoot() {
 
   <div class="slider-container">
     <h3>Serwo 1 (Kanał 0)</h3>
-    <input type="range" min="0" max="77" value="0" class="slider" id="servo1Range" onchange="sendServoData(0, this.value)">
-    <p>Kąt: <span id="servo1Angle" class="angle-display">90</span>°</p>
+    <input type="range" min="10" max="80" value="30" class="slider" id="servo1Range" onchange="sendServoData(0, this.value)">
+    <p>Kąt: <span id="servo1Angle" class="angle-display">30</span>°</p>
   </div>
 
   <div class="slider-container">
@@ -64,20 +64,20 @@ void handleRoot() {
 
   <div class="slider-container">
     <h3>Serwo 3 (Kanał 2)</h3>
-    <input type="range" min="0" max="180" value="90" class="slider" id="servo3Range" onchange="sendServoData(2, this.value)">
-    <p>Kąt: <span id="servo3Angle" class="angle-display">90</span>°</p>
+    <input type="range" min="0" max="180" value="180" class="slider" id="servo3Range" onchange="sendServoData(2, this.value)">
+    <p>Kąt: <span id="servo3Angle" class="angle-display">180</span>°</p>
   </div>
 
   <div class="slider-container">
     <h3>Serwo 4 (Kanał 3)</h3>
-    <input type="range" min="0" max="180" value="90" class="slider" id="servo4Range" onchange="sendServoData(3, this.value)">
-    <p>Kąt: <span id="servo4Angle" class="angle-display">90</span>°</p>
+    <input type="range" min="0" max="180" value="30" class="slider" id="servo4Range" onchange="sendServoData(3, this.value)">
+    <p>Kąt: <span id="servo4Angle" class="angle-display">30</span>°</p>
   </div>
 
   <div class="slider-container">
     <h3>Serwo 5 (Kanał 4)</h3>
-    <input type="range" min="0" max="180" value="90" class="slider" id="servo5Range" onchange="sendServoData(4, this.value)">
-    <p>Kąt: <span id="servo5Angle" class="angle-display">90</span>°</p>
+    <input type="range" min="0" max="180" value="30" class="slider" id="servo5Range" onchange="sendServoData(4, this.value)">
+    <p>Kąt: <span id="servo5Angle" class="angle-display">30</span>°</p>
   </div>
 
   <div class="slider-container">
@@ -138,11 +138,11 @@ void setup() {
   pwm.setPWMFreq(SERVO_FREQ);  // Ustawienie częstotliwości PWM dla serw (50 Hz)
 
   // Ustawienie początkowe wszystkich serw na 90 stopni
-  setServoAngle(SERVO1_CHANNEL, 0);
+  setServoAngle(SERVO1_CHANNEL, 30);
   setServoAngle(SERVO2_CHANNEL, 90);
-  setServoAngle(SERVO3_CHANNEL, 90);
-  setServoAngle(SERVO4_CHANNEL, 90);
-  setServoAngle(SERVO5_CHANNEL, 90);
+  setServoAngle(SERVO3_CHANNEL, 180);
+  setServoAngle(SERVO4_CHANNEL, 30);
+  setServoAngle(SERVO5_CHANNEL, 30);
   setServoAngle(SERVO6_CHANNEL, 90);
 
   // 2. Konfiguracja Wi-Fi (Tryb Access Point)
