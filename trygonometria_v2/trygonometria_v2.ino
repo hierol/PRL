@@ -32,9 +32,11 @@ void loop() {
 struct Position positioner(double x, double y, double z) {
   
   //dlugosci segmentow
-  const double l1 = 5;
-  const double l2 = 3;
-  const double l3 = 2;
+  const double l1 = 10;
+  const double l2 = 10;
+  const double l3 = 20;
+
+  
 
   double k0 = atan( y)
 
