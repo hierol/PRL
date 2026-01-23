@@ -1,6 +1,5 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
-#include "analread.h"
 
 #define SERVOMIN  150
 #define SERVOMAX  600
@@ -20,15 +19,15 @@ int c_channel = 0;
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
-void move(int servo_i, int degrees) {
+void kmove(int servo_i, int degrees) {
   int pulseLen = map(degrees, 0, 180, SERVOMIN, SERVOMAX);
   Serial.print("Ustawiam servo "); Serial.print(servo_i); Serial.print(" na "); Serial.print(pulseLen); Serial.println("");
   pwm.setPWM(servo_i, 0, pulseLen);
 }
 
-void setup() {
+void ksetup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  //Serial.begin(9600);
   Serial.println("Setup");
 
   pwm.begin();
@@ -44,7 +43,7 @@ void setup() {
 
 }
 
-void loop() {
+void kloop() {
   // put your main code here, to run repeatedly:
   //Serial.println(digitalRead(32));
   if (digitalRead(27) == LOW) {
