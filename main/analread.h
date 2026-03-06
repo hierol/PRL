@@ -1,10 +1,10 @@
 #ifndef analread_h
 #define analread_h
 
-float zakres0 = 0.0;
-float zakres1 = 0.0;
-float zakres2 = 0.0;
-float zakres3 = 0.0;
+extern float zakres0 = 0.0;
+extern float zakres1 = 0.0;
+extern float zakres2 = 0.0;
+extern float zakres3 = 0.0;
 
 extern float war_s0 = 0; //todo
 extern float war_s1 = 0;
