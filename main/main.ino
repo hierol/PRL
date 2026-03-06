@@ -23,10 +23,16 @@ void setup() {
 
 int angleToPWM(int angle){
 
-  if( angle < 90 && angle > -90){
-    int PWM = (270/90 * angle + 380);
-    return PWM;
+  if( angle > 90 ){  //clamp angle
+    angle = 90;
   }
+  if( angle < -90 ){
+    angle = -90;
+  }
+
+  int PWM = (270/90 * angle + 380); //translate angle in deg to PWM signal
+  return PWM;
+
 }
 
 
@@ -37,7 +43,6 @@ void loop() {
 
   // adjust angle
   currentAngle_S1 += zakres1 * 10;
-  currentAngle_S2 += zakres2 * 10;
 
   // write to servo
   pwm.setPWM(0, 0, angleToPWM(currentAngle_S0) );
