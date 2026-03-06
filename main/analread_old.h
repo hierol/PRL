@@ -31,9 +31,12 @@ void joystick_pos()
   val1 = analogRead (analogPin1); // 0.0-3.3V ~ 0-4095 ~ 0-3800
   val2 = analogRead (analogPin2);
 
+  int og_val1 = val1;
+  int og_val2 = val2;
+
   // Wstępne przesunięcie - pozycja środkowa joysticka = 0
-  val1 -= 1900;
-  val2 -= 1900;
+  val1 -= 1915; // 1900-1927 // og 1900 // zakres lewo 1915-drift // prawo 2180-drift
+  val2 -= 1870; // 1860-1883 // og 1900 // zakres lewo 1870-drift // prawo 2225-drift
 
   // Zerowanie driftu - Strefa Nieczułości -> +-100
   if (( val1 >= (-1*drift) ) && ( val1 <= drift )) {val1=0;}
@@ -42,26 +45,26 @@ void joystick_pos()
   // Skalowanie - Normalizacja do +-1.0
   if (val1 < 0) {
     val1 += drift;
-    zakres1 = val1 / (1900.0 - drift);
+    zakres1 = val1 / (1915.0 - drift);
   } else if (val1 > 0) {
     val1 -= drift;
-    zakres1 = val1 / (1900.0 - drift);
+    zakres1 = val1 / (2180.0 - drift);
   } else {zakres1 = 0;}
 
   if (val2 < 0) {
     val2 += drift;
-    zakres2 = val2 / (1900.0 - drift);
+    zakres2 = val2 / (1870.0 - drift);
   } else if (val2 > 0) {
     val2 -= drift;
-    zakres2 = val2 / (1900.0 - drift);
+    zakres2 = val2 / (2225.0 - drift);
   } else {zakres2 = 0;}
 
-  if (zakres1 > 1){
-    zakres1 = 1;
-  }
-  if (zakres2 > 1){
-    zakres2 = 1;
-  }
+  //if (zakres1 > 1){
+  //  zakres1 = 1;
+  //}
+  //if (zakres2 > 1){
+  //  zakres2 = 1;
+  //}
 
   //war_s0 = 270 * zakres0 + 380; // to implement
   war_s1 = 270 * zakres1 + 380;
@@ -69,8 +72,10 @@ void joystick_pos()
   //war_s3 = 270 * zakres3 + 380; // to implement
 
   //Serial.println("+================+");
-  Serial.print("kanał 1 => sterowanie: "); Serial.print(zakres1); Serial.print(" | Anal: "); Serial.println(val1);
-  Serial.print("kanał 2 => sterowanie: "); Serial.print(zakres2); Serial.print(" | Anal: "); Serial.println(val2);
+  Serial.print("kanał 1 => sterowanie: "); Serial.print(zakres1); Serial.print(" | Anal: "); Serial.print(val1); \
+  Serial.print(" | Anal_OG: "); Serial.println(og_val1);
+  Serial.print("kanał 2 => sterowanie: "); Serial.print(zakres2); Serial.print(" | Anal: "); Serial.print(val2); \
+  Serial.print(" | Anal_OG: "); Serial.println(og_val2);
   Serial.println("+================+");
-  delay(100);
+  delay(200);
 }
