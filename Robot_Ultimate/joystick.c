@@ -4,7 +4,8 @@
 #include <Arduino.h>
 
 
-static unsigned long lastTime = 0; // ostatni pomiar -> gdy T~
+static unsigned long lastTime1 = 0; // ostatni pomiar -> gdy T~
+static unsigned long lastTime2 = 0;
 static const float T = 0.1; // okres wywołania [sekundy]
 static float zakres1_n_1 = 0.0; // poprzednia próbka
 static float zakres2_n_1 = 0.0;
@@ -12,10 +13,10 @@ static float zakres1_n_2 = 0.0; // 2 próbki wstecz
 static float zakres2_n_2 = 0.0;
 
 
-static float timeDelta() {
+static float timeDelta(unsigned long* lastTime) {
   unsigned long now = millis();
-  unsigned long delta_ms = MAX(0, now - lastTime);
-  lastTime = now;
+  unsigned long delta_ms = MAX(0, now - *lastTime);
+  *lastTime = now;
   return (float)delta_ms/1000;
 }
 
@@ -57,23 +58,48 @@ void joystick_pos(float* zakres1, float* zakres2)
 
   // Wygładzanie sterowania -> Filtr Dolnoprzepustowy
   switch (SMOOTHING_MODE) {
-    case 0:
+    case 0: {
       // pass
       break;
-    case 1:
-      _zakres1 = LPF_I(_zakres1, zakres1_n_1, timeDelta(), 1.0);
-      _zakres2 = LPF_I(_zakres2, zakres2_n_1, timeDelta(), 1.0);
+    }
+    case 1: {
+      // Sprawdzenie czy obecny sygnał nie jest słabszy od poprzedniego
+      unsigned char BREAKING1 = abs(_zakres1) < abs(zakres1_n_1); // |u(n)| < |u(n-1)|
+      unsigned char BREAKING2 = abs(_zakres2) < abs(zakres2_n_1);
+
+      // Przy szybkim hamowaniu -> omiń filtr
+      if (!BREAKING1 || !FAST_BREAK) {
+      _zakres1 = LPF_I(_zakres1, zakres1_n_1, timeDelta(&lastTime1), 1.0);
+      }
+      if (!BREAKING2 || !FAST_BREAK) {
+      _zakres2 = LPF_I(_zakres2, zakres2_n_1, timeDelta(&lastTime2), 1.0);
+      }
+      
+      // Przesunięcie próbek pod następną iterację
       zakres1_n_1 = _zakres1;
       zakres2_n_1 = _zakres2;
       break;
-    case 2:
-      _zakres1 = LPF_II(_zakres1, zakres1_n_1, zakres1_n_2, timeDelta(), 1.0);
-      _zakres2 = LPF_II(_zakres2, zakres2_n_1, zakres2_n_2, timeDelta(), 1.0);
+    }
+    case 2: {
+      // Sprawdzenie czy obecny sygnał nie jest słabszy od poprzedniego
+      unsigned char BREAKING1 = abs(_zakres1) < abs(zakres1_n_1); // |u(n)| < |u(n-1)|
+      unsigned char BREAKING2 = abs(_zakres2) < abs(zakres2_n_1);
+
+      // Przy szybkim hamowaniu -> omiń filtr
+      if (!BREAKING1 || !FAST_BREAK) {
+      _zakres1 = LPF_II(_zakres1, zakres1_n_1, zakres1_n_2, timeDelta(&lastTime1), 1.0);
+      }
+      if (!BREAKING2 || !FAST_BREAK) {
+      _zakres2 = LPF_II(_zakres2, zakres2_n_1, zakres2_n_2, timeDelta(&lastTime2), 1.0);
+      }
+      
+      // Przesunięcie próbek pod następną iterację
       zakres1_n_2 = zakres1_n_1;
       zakres1_n_1 = _zakres1;
       zakres2_n_2 = zakres2_n_1;
       zakres2_n_1 = _zakres2;
       break;
+    }
     default:
       // pass
   }
