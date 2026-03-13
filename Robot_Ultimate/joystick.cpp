@@ -6,11 +6,19 @@
 
 static unsigned long lastTime1 = 0; // ostatni pomiar -> gdy T~
 static unsigned long lastTime2 = 0;
+static unsigned long lastTime3 = 0;
+static unsigned long lastTime4 = 0;
 static const float T = 0.1; // okres wywołania [sekundy]
+
 static float zakres1_n_1 = 0.0; // poprzednia próbka
 static float zakres2_n_1 = 0.0;
 static float zakres1_n_2 = 0.0; // 2 próbki wstecz
 static float zakres2_n_2 = 0.0;
+
+static float zakres3_n_1 = 0.0;
+static float zakres4_n_1 = 0.0;
+static float zakres3_n_2 = 0.0;
+static float zakres4_n_2 = 0.0;
 
 
 static float timeDelta(unsigned long* lastTime) {
@@ -21,14 +29,44 @@ static float timeDelta(unsigned long* lastTime) {
 }
 
 
-void joystick_pos(float* zakres1, float* zakres2) 
+void joystick_pos(float* zakres1, float* zakres2, unsigned int joystick_n) 
 {
-  // Odczyt z ADC // 0.0-3.3V -> 0-4095
-  int16_t channel1 = analogRead (ADCPIN_CH1);
-  int16_t channel2 = analogRead (ADCPIN_CH2);
+  unsigned long* last_time_adr1;
+  unsigned long* last_time_adr2;
+  float* zakres1_n_1_adr;
+  float* zakres1_n_2_adr;
+  float* zakres2_n_1_adr;
+  float* zakres2_n_2_adr;
 
-  //Serial.println(channel1);
-  //Serial.println(channel2);
+  int16_t channel1;
+  int16_t channel2;
+
+  if (joystick_n == 0) {
+    last_time_adr1 = &lastTime1;
+    last_time_adr2 = &lastTime2;
+
+    zakres1_n_1_adr = &zakres1_n_1;
+    zakres1_n_2_adr = &zakres1_n_2;
+    zakres2_n_1_adr = &zakres2_n_1;
+    zakres2_n_2_adr = &zakres2_n_2;
+
+    // Odczyt z ADC // 0.0-3.3V -> 0-4095
+    channel1 = analogRead (ADCPIN_CH1);
+    channel2 = analogRead (ADCPIN_CH2);
+  }
+  else if (joystick_n == 1) {
+    last_time_adr1 = &lastTime3;
+    last_time_adr2 = &lastTime4;
+
+    zakres1_n_1_adr = &zakres3_n_1;
+    zakres1_n_2_adr = &zakres3_n_2;
+    zakres2_n_1_adr = &zakres4_n_1;
+    zakres2_n_2_adr = &zakres4_n_2;
+
+    // Odczyt z ADC // 0.0-3.3V -> 0-4095
+    channel1 = analogRead (ADCPIN_CH3);
+    channel2 = analogRead (ADCPIN_CH4);
+  }
 
 
   // Wstępne przesunięcie -> pozycja środkowa joysticka = 0
@@ -69,40 +107,40 @@ void joystick_pos(float* zakres1, float* zakres2)
     }
     case 1: {
       // Sprawdzenie czy obecny sygnał nie jest słabszy od poprzedniego
-      unsigned char BREAKING1 = abs(_zakres1) < abs(zakres1_n_1); // |u(n)| < |u(n-1)|
-      unsigned char BREAKING2 = abs(_zakres2) < abs(zakres2_n_1);
+      unsigned char BREAKING1 = abs(_zakres1) < abs(*zakres1_n_1_adr); // |u(n)| < |u(n-1)|
+      unsigned char BREAKING2 = abs(_zakres2) < abs(*zakres2_n_1_adr);
 
       // Przy szybkim hamowaniu -> omiń filtr
       if (!BREAKING1 || !FAST_BREAK) {
-      _zakres1 = LPF_I(_zakres1, zakres1_n_1, timeDelta(&lastTime1), 1.0);
+      _zakres1 = LPF_I(_zakres1, *zakres1_n_1_adr, timeDelta(last_time_adr1), 1.0);
       }
       if (!BREAKING2 || !FAST_BREAK) {
-      _zakres2 = LPF_I(_zakres2, zakres2_n_1, timeDelta(&lastTime2), 1.0);
+      _zakres2 = LPF_I(_zakres2, *zakres2_n_1_adr, timeDelta(last_time_adr2), 1.0);
       }
       
       // Przesunięcie próbek pod następną iterację
-      zakres1_n_1 = _zakres1;
-      zakres2_n_1 = _zakres2;
+      *zakres1_n_1_adr = _zakres1;
+      *zakres2_n_1_adr = _zakres2;
       break;
     }
     case 2: {
       // Sprawdzenie czy obecny sygnał nie jest słabszy od poprzedniego
-      unsigned char BREAKING1 = abs(_zakres1) < abs(zakres1_n_1); // |u(n)| < |u(n-1)|
-      unsigned char BREAKING2 = abs(_zakres2) < abs(zakres2_n_1);
+      unsigned char BREAKING1 = abs(_zakres1) < abs(*zakres1_n_1_adr); // |u(n)| < |u(n-1)|
+      unsigned char BREAKING2 = abs(_zakres2) < abs(*zakres2_n_1_adr);
 
       // Przy szybkim hamowaniu -> omiń filtr
       if (!BREAKING1 || !FAST_BREAK) {
-      _zakres1 = LPF_II(_zakres1, zakres1_n_1, zakres1_n_2, timeDelta(&lastTime1), 1.0);
+      _zakres1 = LPF_II(_zakres1, *zakres1_n_1_adr, *zakres1_n_2_adr, timeDelta(&lastTime1), 1.0);
       }
       if (!BREAKING2 || !FAST_BREAK) {
-      _zakres2 = LPF_II(_zakres2, zakres2_n_1, zakres2_n_2, timeDelta(&lastTime2), 1.0);
+      _zakres2 = LPF_II(_zakres2, *zakres2_n_1_adr, *zakres2_n_2_adr, timeDelta(&lastTime2), 1.0);
       }
       
       // Przesunięcie próbek pod następną iterację
-      zakres1_n_2 = zakres1_n_1;
-      zakres1_n_1 = _zakres1;
-      zakres2_n_2 = zakres2_n_1;
-      zakres2_n_1 = _zakres2;
+      *zakres1_n_2_adr = zakres1_n_1;
+      *zakres1_n_1_adr = _zakres1;
+      *zakres2_n_2_adr = zakres2_n_1;
+      *zakres2_n_1_adr = _zakres2;
       break;
     }
     default:
@@ -116,8 +154,9 @@ void joystick_pos(float* zakres1, float* zakres2)
 
 
   // Logowanie danych
-  Serial.print("kanał 1 => sterowanie: "); Serial.print(_zakres1, 3); Serial.print(" | ADC: "); Serial.println(channel1);
-  Serial.print("kanał 2 => sterowanie: "); Serial.print(_zakres2, 3); Serial.print(" | ADC: "); Serial.println(channel2);
+  Serial.print("== Joystick"); Serial.print(joystick_n); Serial.print(" ==");
+  Serial.print("kanał "); Serial.print(2*joystick_n+1); Serial.print(" => sterowanie: "); Serial.print(_zakres1, 3); Serial.print(" | ADC: "); Serial.println(channel1);
+  Serial.print("kanał "); Serial.print(2*joystick_n+2); Serial.print(" => sterowanie: "); Serial.print(_zakres2, 3); Serial.print(" | ADC: "); Serial.println(channel2);
   Serial.println("+==========+");
   delay_ms((int)(T*1000)); // 100ms
 }

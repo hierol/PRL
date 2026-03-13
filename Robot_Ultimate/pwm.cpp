@@ -15,7 +15,7 @@ void pwm_setup() {
   pwm.begin();
   pwm.setPWMFreq(SERVO_FREQ);
 
-  for (int n=0; n<4; n++) { pwm.setPWM(n, 0, init_pwm); }
+  for (int n=0; n<6; n++) { pwm.setPWM(n, 0, init_pwm); }
 
   Serial.println("PWM: Done");
 }
