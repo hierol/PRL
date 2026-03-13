@@ -8,7 +8,7 @@ static unsigned long lastTime1 = 0; // ostatni pomiar -> gdy T~
 static unsigned long lastTime2 = 0;
 static unsigned long lastTime3 = 0;
 static unsigned long lastTime4 = 0;
-static const float T = 0.1; // okres wywołania [sekundy]
+static const float T = 0.01; // okres wywołania [sekundy]
 
 static float zakres1_n_1 = 0.0; // poprzednia próbka
 static float zakres2_n_1 = 0.0;
@@ -112,10 +112,10 @@ void joystick_pos(float* zakres1, float* zakres2, unsigned int joystick_n)
 
       // Przy szybkim hamowaniu -> omiń filtr
       if (!BREAKING1 || !FAST_BREAK) {
-      _zakres1 = LPF_I(_zakres1, *zakres1_n_1_adr, timeDelta(last_time_adr1), 1.0);
+      _zakres1 = LPF_I(_zakres1, *zakres1_n_1_adr, timeDelta(last_time_adr1), 2.0);
       }
       if (!BREAKING2 || !FAST_BREAK) {
-      _zakres2 = LPF_I(_zakres2, *zakres2_n_1_adr, timeDelta(last_time_adr2), 1.0);
+      _zakres2 = LPF_I(_zakres2, *zakres2_n_1_adr, timeDelta(last_time_adr2), 2.0);
       }
       
       // Przesunięcie próbek pod następną iterację
@@ -130,10 +130,10 @@ void joystick_pos(float* zakres1, float* zakres2, unsigned int joystick_n)
 
       // Przy szybkim hamowaniu -> omiń filtr
       if (!BREAKING1 || !FAST_BREAK) {
-      _zakres1 = LPF_II(_zakres1, *zakres1_n_1_adr, *zakres1_n_2_adr, timeDelta(&lastTime1), 1.0);
+      _zakres1 = LPF_II(_zakres1, *zakres1_n_1_adr, *zakres1_n_2_adr, timeDelta(&lastTime1), 2.0);
       }
       if (!BREAKING2 || !FAST_BREAK) {
-      _zakres2 = LPF_II(_zakres2, *zakres2_n_1_adr, *zakres2_n_2_adr, timeDelta(&lastTime2), 1.0);
+      _zakres2 = LPF_II(_zakres2, *zakres2_n_1_adr, *zakres2_n_2_adr, timeDelta(&lastTime2), 2.0);
       }
       
       // Przesunięcie próbek pod następną iterację
@@ -154,7 +154,7 @@ void joystick_pos(float* zakres1, float* zakres2, unsigned int joystick_n)
 
 
   // Logowanie danych
-  Serial.print("== Joystick"); Serial.print(joystick_n); Serial.print(" ==");
+  Serial.print("== Joystick"); Serial.print(joystick_n); Serial.println(" ==");
   Serial.print("kanał "); Serial.print(2*joystick_n+1); Serial.print(" => sterowanie: "); Serial.print(_zakres1, 3); Serial.print(" | ADC: "); Serial.println(channel1);
   Serial.print("kanał "); Serial.print(2*joystick_n+2); Serial.print(" => sterowanie: "); Serial.print(_zakres2, 3); Serial.print(" | ADC: "); Serial.println(channel2);
   Serial.println("+==========+");
