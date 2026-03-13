@@ -5,6 +5,16 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <list>
 
+  //inicjalizacja zmiennych globalnych - przeniesone z analread.h
+  extern float zakres0 = 0.0;
+  extern float zakres1 = 0.0;
+  extern float zakres2 = 0.0;
+  extern float zakres3 = 0.0;
+  extern float war_s0 = 0; //todo
+  extern float war_s1 = 0;
+  extern float war_s2 = 0;
+  extern float war_s3 = 0; //todo
+
   //set default angles
   int currentAngle_S0 = 0;
   int currentAngle_S1 = 0;
