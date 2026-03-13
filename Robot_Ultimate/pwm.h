@@ -4,7 +4,7 @@
 
 #define DEGMIN -90
 #define DEGMAX 90
-#define DEFUALT_ANGLE 0
+#define DEFAULT_ANGLE 0
 
 #define SERVOMIN  150
 #define SERVOMAX  600

@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "utilsf.h"
 #include "pwm.h"
 #include "joystick.h"
 #include "filtry.h"
@@ -31,6 +31,9 @@ void loop() {
   // Konwersja na kąt serwa
   currentAngle_S1 += zakres1 * 10;
   clamp_angle(&currentAngle_S1);
+
+  currentAngle_S2 += zakres2 * 10;
+  clamp_angle(&currentAngle_S2);
 
   // Ustawienie serw
   servo_move(0, currentAngle_S0);

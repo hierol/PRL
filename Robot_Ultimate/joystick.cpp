@@ -1,5 +1,5 @@
+#include "utilsf.h"
 #include "joystick.h"
-#include "utils.h"
 #include "filtry.h"
 #include <Arduino.h>
 
@@ -27,6 +27,9 @@ void joystick_pos(float* zakres1, float* zakres2)
   int16_t channel1 = analogRead (ADCPIN_CH1);
   int16_t channel2 = analogRead (ADCPIN_CH2);
 
+  //Serial.println(channel1);
+  //Serial.println(channel2);
+
 
   // Wstępne przesunięcie -> pozycja środkowa joysticka = 0
   channel1 -= MIDPOINT_CH1; // midpoint ~ 1925
@@ -37,6 +40,8 @@ void joystick_pos(float* zakres1, float* zakres2)
   if (( channel1 >= (-1*DRIFT) ) && ( channel1 <= DRIFT )) {channel1=0;}
   if (( channel2 >= (-1*DRIFT) ) && ( channel2 <= DRIFT )) {channel2=0;}
 
+  float _zakres1;
+  float _zakres2;
 
   // Skalowanie -> Normalizacja do +-1.0
   if (channel1 < 0) {
@@ -44,7 +49,7 @@ void joystick_pos(float* zakres1, float* zakres2)
     _zakres1 = (float)channel1 / (MIDPOINT_CH1 - DRIFT); // rzutowanie do float
   } else if (channel1 > 0) {
     channel1 -= DRIFT;
-    _zakres1 = (float)channel1 / (MIDPOINT_CH1 - ADC_RANGE - DRIFT);
+    _zakres1 = (float)channel1 / (ADC_RANGE - MIDPOINT_CH1 - DRIFT);
   } else {_zakres1 = 0.0;}
 
   if (channel2 < 0) {
@@ -52,7 +57,7 @@ void joystick_pos(float* zakres1, float* zakres2)
     _zakres2 = (float)channel2 / (MIDPOINT_CH2 - DRIFT);
   } else if (channel2 > 0) {
     channel2 -= DRIFT;
-    _zakres2 = (float)channel2 / (MIDPOINT_CH2 - ADC_RANGE - DRIFT);
+    _zakres2 = (float)channel2 / (ADC_RANGE - MIDPOINT_CH2 - DRIFT);
   } else {_zakres2 = 0.0;}
 
 
@@ -101,7 +106,7 @@ void joystick_pos(float* zakres1, float* zakres2)
       break;
     }
     default:
-      // pass
+      break;
   }
 
 
@@ -111,8 +116,8 @@ void joystick_pos(float* zakres1, float* zakres2)
 
 
   // Logowanie danych
-  log_("kanał 1 => sterowanie: "); log_(_zakres1, 3); log_(" | ADC: "); log_ln(channel1);
-  log_("kanał 2 => sterowanie: "); log_(_zakres2, 3); log_(" | ADC: "); log_ln(channel2);
-  log_ln("+==========+");
+  Serial.print("kanał 1 => sterowanie: "); Serial.print(_zakres1, 3); Serial.print(" | ADC: "); Serial.println(channel1);
+  Serial.print("kanał 2 => sterowanie: "); Serial.print(_zakres2, 3); Serial.print(" | ADC: "); Serial.println(channel2);
+  Serial.println("+==========+");
   delay_ms((int)(T*1000)); // 100ms
 }
