@@ -1,7 +1,7 @@
-#include "utilsf.h"
-#include "pwm.h"
-#include "joystick.h"
-#include "filtry.h"
+#include <utilsf.h>
+#include <pwm.h>
+#include <joystick.h>
+#include <filtry.h>
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
@@ -53,6 +53,6 @@ void loop() {
   servo_move(4, currentAngle_S4);
   servo_move(5, currentAngle_S5);
 
-  //delay(400);
+  delay(400);
 
 }
