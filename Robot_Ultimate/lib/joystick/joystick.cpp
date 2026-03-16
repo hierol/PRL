@@ -2,6 +2,7 @@
 #include "joystick.h"
 #include "filtry.h"
 #include <Arduino.h>
+#include <cmath>
 
 
 static unsigned long lastTime1 = 0; // ostatni pomiar -> gdy T~
@@ -107,8 +108,8 @@ void joystick_pos(float* zakres1, float* zakres2, unsigned int joystick_n)
     }
     case 1: {
       // Sprawdzenie czy obecny sygnał nie jest słabszy od poprzedniego
-      unsigned char BREAKING1 = abs(_zakres1) < abs(*zakres1_n_1_adr); // |u(n)| < |u(n-1)|
-      unsigned char BREAKING2 = abs(_zakres2) < abs(*zakres2_n_1_adr);
+      unsigned char BREAKING1 = fabs(_zakres1) < fabs(*zakres1_n_1_adr); // |u(n)| < |u(n-1)|
+      unsigned char BREAKING2 = fabs(_zakres2) < fabs(*zakres2_n_1_adr);
 
       // Przy szybkim hamowaniu -> omiń filtr
       if (!BREAKING1 || !FAST_BREAK) {
@@ -137,9 +138,9 @@ void joystick_pos(float* zakres1, float* zakres2, unsigned int joystick_n)
       }
       
       // Przesunięcie próbek pod następną iterację
-      *zakres1_n_2_adr = zakres1_n_1;
+      *zakres1_n_2_adr = *zakres1_n_1_adr;
       *zakres1_n_1_adr = _zakres1;
-      *zakres2_n_2_adr = zakres2_n_1;
+      *zakres2_n_2_adr = *zakres2_n_1_adr;
       *zakres2_n_1_adr = _zakres2;
       break;
     }

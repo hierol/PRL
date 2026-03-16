@@ -5,10 +5,6 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
-struct Arm {
-  int S[6];
-};
-
 // Inicjalizacja kątów serw
 Arm currentAngle = {{0, 0, 0, 0, 0, 0}};
 
@@ -32,14 +28,14 @@ void loop() {
   joystick_pos(&zakres3, &zakres4, 1);
 
   // Konwersja na kąt serwa
-  currentAngle.S[2] += zakres1 * 10;
-  clamp_angle(&currentAngle.S[2]);
-
-  currentAngle.S[3] += zakres2 * 10;
+  currentAngle.S[3] += zakres1 * 10;
   clamp_angle(&currentAngle.S[3]);
 
-  currentAngle.S[4] += zakres3 * 10;
+  currentAngle.S[4] += zakres2 * 10;
   clamp_angle(&currentAngle.S[4]);
+
+  currentAngle.S[5] += zakres3 * 10;
+  clamp_angle(&currentAngle.S[5]);
 
   currentAngle.S[5] += zakres4 * 10;
   clamp_angle(&currentAngle.S[5]);

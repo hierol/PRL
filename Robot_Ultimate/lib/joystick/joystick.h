@@ -4,7 +4,7 @@
 
 enum Toggle { OFF = 0, ON = 1 };
 
-#define DRIFT 45
+#define DRIFT 170
 #define ADC_RANGE 4095
 #define MIDPOINT_CH1 1925
 #define MIDPOINT_CH2 1880
