@@ -5,14 +5,13 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
+struct Arm {
+  int S[6];
+};
 
 // Inicjalizacja kątów serw
-int currentAngle_S0 = 0;
-int currentAngle_S1 = 0;
-int currentAngle_S2 = 0;
-int currentAngle_S3 = 0;
-int currentAngle_S4 = 0;
-int currentAngle_S5 = 0;
+Arm currentAngle = {{0, 0, 0, 0, 0, 0}};
+
 
 float zakres1 = 0.0, zakres2 = 0.0;
 float zakres3 = 0.0, zakres4 = 0.0;
@@ -33,26 +32,24 @@ void loop() {
   joystick_pos(&zakres3, &zakres4, 1);
 
   // Konwersja na kąt serwa
-  currentAngle_S2 += zakres1 * 10;
-  clamp_angle(&currentAngle_S2);
+  currentAngle.S[2] += zakres1 * 10;
+  clamp_angle(&currentAngle.S[2]);
 
-  currentAngle_S3 += zakres2 * 10;
-  clamp_angle(&currentAngle_S3);
+  currentAngle.S[3] += zakres2 * 10;
+  clamp_angle(&currentAngle.S[3]);
 
-  currentAngle_S4 += zakres3 * 10;
-  clamp_angle(&currentAngle_S4);
+  currentAngle.S[4] += zakres3 * 10;
+  clamp_angle(&currentAngle.S[4]);
 
-  currentAngle_S5 += zakres4 * 10;
-  clamp_angle(&currentAngle_S5);
+  currentAngle.S[5] += zakres4 * 10;
+  clamp_angle(&currentAngle.S[5]);
 
   // Ustawienie serw
-  servo_move(0, currentAngle_S0);
-  servo_move(1, currentAngle_S1);
-  servo_move(2, currentAngle_S2);
-  servo_move(3, currentAngle_S3);
-  servo_move(4, currentAngle_S4);
-  servo_move(5, currentAngle_S5);
+  for (int n=0; n<6; n++) {
+    servo_move(n, currentAngle.S[n]);
+  }
 
-  delay(400);
+
+  delay(100);
 
 }
