@@ -49,8 +49,11 @@ extern struct angles trig(double xk, double yk, double p){ // xk, yk - kordy nar
 
   Serial.printf (" xw: %f \n yw: %f \n t: %f \n O2: %f \n k1: %f \n k2: %f \n O1: %f \n O3: %f \n",xw,yw,t,katy.O2,k1,k2,katy.O1,katy.O3);
 
-  double katyO1 = katy.O1;
-  double katyO2 = katy.O2;
-  double katyO3 = katy.O3;
+  return angles{
+    katyO1,
+    katyO2,
+    katyO3
+  };
+
 }
 // trygonomertryja kinda dziala, trzeba przetlumaczyc O1-O3 na wartosc ktora wyslemy do serw. proponuje wykorzystac wspolny kod z kalibracji, bo tam jest juz sterowanie za pomoca przyciskow *yay*. 
