@@ -56,7 +56,8 @@
     [ "btn1:1.r", "esp:19", "gray", [ "v-19.2", "h317", "v268.8" ] ],
     [ "btn2:1.r", "esp:18", "gray", [ "h211.4", "v259.2" ] ],
     [ "esp:5V", "joystick1:VCC", "red", [ "h-28.65", "v-163.2", "h-96" ] ],
-    [ "joystick1:VCC", "joystick2:VCC", "red", [ "v19.2", "h-124.8" ] ]
+    [ "joystick1:VCC", "joystick2:VCC", "red", [ "v19.2", "h-124.8" ] ],
+    [ "esp:CMD", "sw2:2", "black", [ "h-9.45", "v-48", "h-105.5" ] ]
   ],
   "dependencies": {}
 }

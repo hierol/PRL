@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 unsigned char xpin1 = 32;
 unsigned char ypin2 = 33;
 

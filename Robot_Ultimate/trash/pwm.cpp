@@ -40,6 +40,6 @@ void clamp_angle(int* angle) {
 
 
 int angle_to_pwm(int angle) {
-  int pulseLen = map(degrees, DEGMIN, DEGMAX, SERVOMIN, SERVOMAX);
+  int pulseLen = map(angle, DEGMIN, DEGMAX, SERVOMIN, SERVOMAX);
   return pulseLen;
 }
