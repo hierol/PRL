@@ -9,5 +9,8 @@
 #define delay_ms(ms) delay(ms)
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 
+struct Arm {
+  int S[6];
+};
 
 #endif
