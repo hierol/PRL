@@ -4,7 +4,9 @@
 #include <filtry.h>
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
+#include <dance.h>
 
+int tryb_robota = 1;
 
 // Inicjalizacja kątów serw
 int currentAngle_S0 = 0;
@@ -25,9 +27,7 @@ void setup() {
 
 }
 
-
-void loop() {
-
+void sterowanieJoystickiem(){
   // Aktualizacja sterowania -> odczyt zadanej prędkości
   joystick_pos(&zakres1, &zakres2, 0);
   joystick_pos(&zakres3, &zakres4, 1);
@@ -44,7 +44,7 @@ void loop() {
 
   currentAngle_S5 += zakres4 * 10;
   clamp_angle(&currentAngle_S5);
-
+  
   // Ustawienie serw
   servo_move(0, currentAngle_S0);
   servo_move(1, currentAngle_S1);
@@ -54,5 +54,15 @@ void loop() {
   servo_move(5, currentAngle_S5);
 
   delay(400);
+}
+
+
+void loop() {
+
+  if (tryb_robota == 1){
+    sterowanieJoystickiem();
+  } else {
+    dance();
+  }
 
 }

@@ -1,8 +1,17 @@
- #include <filtry.h>
- // Definicja pinów
+#include <filtry.h>
+#include <Arduino.h>
+
+// Definicja pinów
 const int redPin = 9;
 const int greenPin = 10;
 const int bluePin = 11;
+
+// Funkcja pomocnicza do ustawiania koloru
+void setColor(int redValue, int greenValue, int blueValue) {
+  analogWrite(redPin, redValue);
+  analogWrite(greenPin, greenValue);
+  analogWrite(bluePin, blueValue);
+}
 
 void setup() {
   // Ustawienie pinów jako wyjścia
@@ -25,11 +34,4 @@ void loop() {
   delay(1000);
   setColor(255, 255, 255);  // Biały
   delay(1000);
-}
-
-// Funkcja pomocnicza do ustawiania koloru
-void setColor(int redValue, int greenValue, int blueValue) {
-  analogWrite(redPin, redValue);
-  analogWrite(greenPin, greenValue);
-  analogWrite(bluePin, blueValue);
 }
