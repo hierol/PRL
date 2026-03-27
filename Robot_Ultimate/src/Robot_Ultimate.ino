@@ -6,6 +6,7 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <dance.h>
 #include <toolsteer.h>
+#include <trig.h>
 
 int tryb_robota = 1;
 
@@ -50,8 +51,10 @@ void sterowanieManualne(){
 
 void loop() {
 
-  if (danceMode() == 1){
+  if (danceMode() == 0){
     sterowanieManualne();
+  } else if(1 == 0){
+    absoluteSteer();
   } else {
     dance();
   }
