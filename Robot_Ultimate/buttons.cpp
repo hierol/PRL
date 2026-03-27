@@ -1,3 +1,4 @@
+#include "board.h"
 #include "buttons.h"
 #include <Arduino.h>
 

@@ -1,4 +1,5 @@
 #include "utilsf.h"
+#include "pwm.h"
 #include "filtry.h"
 #include "joystick.h"
 #include "control.h"
@@ -12,19 +13,28 @@ LPFI_data LPF_J2X, LPF_J2Y;
 
 AngleAcc AngleS0, AngleS1, AngleS2, AngleS3; // Instancje kątów serw // 4 Serwa Pierwotne
 
-//AngleAcc AngleS4, AngleS5 // Dwa Serwa Ostateczne // S5->Chwytak
+AngleAcc AngleS4, AngleS5; // Dwa Serwa Ostateczne // S5->Chwytak
 
 
 static const float si = 0.3f; // small input -> część sterowania która pomija filtr [zakres od 0.0 do 1.0]
 static const float T = 0.01f; // okres wywołania [sekundy]
 
 
+// Wstępna deklaracja
+static void angle_init(AngleAcc* angleAcc, float start_angle, float Ki);
+static void angle_update(float x, AngleAcc* angleAcc);
+static float filterI(float x, LPFI_data* lpfi_data);
+static float filterII(float x, LPFII_data* lpfii_data);
+static unsigned char braking(float x_n, float x_n_1);
+static void servo_update();
+
+
 void control_init() {
   // Inicjalizacja instancji filtrów LPFI <-------------------------------------------------------- USTAWIĆ TAU
-  LPFI_init(&LPF_J1X, tau, 1.0f); // Instancja LPF // stała czasowa // wzmocnienie
-  LPFI_init(&LPF_J1Y, tau, 1.0f);
-  LPFI_init(&LPF_J2X, tau, 1.0f);
-  LPFI_init(&LPF_J2Y, tau, 1.0f);
+  LPFI_init(&LPF_J1X, 1.0f, 1.0f); // Instancja LPF // stała czasowa // wzmocnienie
+  LPFI_init(&LPF_J1Y, 1.0f, 1.0f);
+  LPFI_init(&LPF_J2X, 1.0f, 1.0f);
+  LPFI_init(&LPF_J2Y, 1.0f, 1.0f);
 
   // TO DO
   //LPFI_init(&LPF_B1, tau, 1.0f); // SerwoX na przyciski
@@ -32,18 +42,18 @@ void control_init() {
 
 
   // Inicjalizacja kątów i wzmocnienia całki (Ki) poszczególnych serw
-  angle_init(AngleS0, START_ANGLE_S0, float Ki); // Instancja całki kąta // kąt początkowy // wzmocnienie całki
-  angle_init(AngleS1, START_ANGLE_S1, float Ki);
-  angle_init(AngleS2, START_ANGLE_S2, float Ki);
-  angle_init(AngleS3, START_ANGLE_S3, float Ki);
+  angle_init(&AngleS0, START_ANGLE_S0, 1.0f); // Instancja całki kąta // kąt początkowy // wzmocnienie całki
+  angle_init(&AngleS1, START_ANGLE_S1, 1.0f);
+  angle_init(&AngleS2, START_ANGLE_S2, 1.0f);
+  angle_init(&AngleS3, START_ANGLE_S3, 1.0f);
 
   // TO DO
-  //angle_init(AngleS4, START_ANGLE_S4, float Ki); // SerwoX na przyciski
-  //angle_init(AngleS5, START_ANGLE_S5, float Ki); // Chwytak
+  angle_init(&AngleS4, START_ANGLE_S4, 1.0f); // SerwoX na przyciski
+  angle_init(&AngleS5, START_ANGLE_S5, 1.0f); // Chwytak
 
 
   // Ustawienie serw na zinicjalizowaną pozycję
-  servo_update()
+  servo_update();
 
 
   // Opóźnienie wywołania
@@ -69,17 +79,17 @@ void control_update(Joystick* joy1, Joystick* joy2) {
 
 
   // PRZYPISAĆ KANAŁY JOYSTICKA I PAR PRZYCISKÓW DO SERW <-------------------------------------------- TO DO
-  angle_update(J1X_f, &AngleS); // całka obecnej próbki
-  angle_update(J1Y_f, &AngleS);
-  angle_update(J2X_f, &AngleS);
-  angle_update(J2Y_f, &AngleS);
+  angle_update(J1X_f, &AngleS0); // całka obecnej próbki
+  angle_update(J1Y_f, &AngleS1);
+  angle_update(J2X_f, &AngleS2);
+  angle_update(J2Y_f, &AngleS3);
 
   //angle_update(B1_f, &AngleS);
   //angle_update(B2_f, &AngleS);
 
 
   // Aktualizacja stanu serw
-  servo_update()
+  servo_update();
 
 
   // Opóźnienie wywołania
@@ -143,10 +153,10 @@ static unsigned char braking(float x_n, float x_n_1) {
 
 static void servo_update() {
   // Ustawienie serw
-  servo_move(0, AngleS0->angle);
-  servo_move(1, AngleS1->angle);
-  servo_move(2, AngleS2->angle);
-  servo_move(3, AngleS3->angle);
-  servo_move(4, AngleS4->angle);
-  servo_move(5, AngleS5->angle);
+  servo_move(0, AngleS0.angle);
+  servo_move(1, AngleS1.angle);
+  servo_move(2, AngleS2.angle);
+  servo_move(3, AngleS3.angle);
+  servo_move(4, AngleS4.angle);
+  servo_move(5, AngleS5.angle);
 }
