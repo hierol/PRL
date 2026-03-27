@@ -8,8 +8,6 @@
 #include "dance.h"
 #include "toolsteer.h"
 
-int tryb_robota = 1;
-
 // Instancje joysticka
 Joystick J1;
 Joystick J2;
