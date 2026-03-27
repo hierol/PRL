@@ -18,6 +18,7 @@ AngleAcc AngleS4, AngleS5; // Dwa Serwa Ostateczne // S5->Chwytak
 
 
 static const float si = 0.2f; // small input -> część sterowania która pomija filtr [zakres od 0.0 do 1.0]
+static const float si_btn = 0.2f; // small input dla przycisków
 static const float T = 0.01f; // okres wywołania [sekundy]
 
 
@@ -77,8 +78,8 @@ void control_update(Joystick* joy1, Joystick* joy2) {
   // TO DO - dodać Buttons* buttons do argumentów funkcji
   int jawD = jaw_direction();
   int headD = head_direction();
-  float B1_f = filterI(jawD*(1.0f-si), &LPF_B1) + si*jawD;
-  float B2_f = filterI(headD*(1.0f-si), &LPF_B2) + si*headD;
+  float B1_f = filterI(jawD*(1.0f-si_btn), &LPF_B1) + si_btn*jawD;
+  float B2_f = filterI(headD*(1.0f-si_btn), &LPF_B2) + si_btn*headD;
 
 
   // PRZYPISAĆ KANAŁY JOYSTICKA I PAR PRZYCISKÓW DO SERW <-------------------------------------------- TO DO
