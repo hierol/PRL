@@ -1,163 +1,67 @@
-#include "utilsf.h"
 #include "joystick.h"
-#include "filtry.h"
 #include <Arduino.h>
 #include <cmath>
 
 
-static unsigned long lastTime1 = 0; // ostatni pomiar -> gdy T~
-static unsigned long lastTime2 = 0;
-static unsigned long lastTime3 = 0;
-static unsigned long lastTime4 = 0;
-static const float T = 0.01; // okres wywołania [sekundy]
-
-static float zakres1_n_1 = 0.0; // poprzednia próbka
-static float zakres2_n_1 = 0.0;
-static float zakres1_n_2 = 0.0; // 2 próbki wstecz
-static float zakres2_n_2 = 0.0;
-
-static float zakres3_n_1 = 0.0;
-static float zakres4_n_1 = 0.0;
-static float zakres3_n_2 = 0.0;
-static float zakres4_n_2 = 0.0;
+//static const float T = 0.01f; // okres wywołania [sekundy]
 
 
-static float timeDelta(unsigned long* lastTime) {
-  unsigned long now = millis();
-  unsigned long delta_ms = MAX(0, now - *lastTime);
-  *lastTime = now;
-  return (float)delta_ms/1000;
+void joystick_init(Joystick* joystick, unsigned char jx_pin, unsigned char jy_pin, unsigned char driftX, unsigned char driftY, unsigned int jx_center, unsigned int jy_center) 
+{
+  joystick->jx_pin = jx_pin;
+  joystick->jy_pin = jy_pin;
+  joystick->driftX = driftX;
+  joystick->driftY = driftY;
+  joystick->jx_center = jx_center;
+  joystick->jy_center = jy_center;
+  joystick->x = 0.0f;
+  joystick->y = 0.0f;
 }
 
 
-void joystick_pos(float* zakres1, float* zakres2, unsigned int joystick_n) 
+void joystick_update(Joystick* joystick) 
 {
-  unsigned long* last_time_adr1;
-  unsigned long* last_time_adr2;
-  float* zakres1_n_1_adr;
-  float* zakres1_n_2_adr;
-  float* zakres2_n_1_adr;
-  float* zakres2_n_2_adr;
+  // Wyjścia znormalizowane // -1.0 <-> 1.0
+  float x;
+  float y;
 
-  int16_t channel1;
-  int16_t channel2;
-
-  if (joystick_n == 0) {
-    last_time_adr1 = &lastTime1;
-    last_time_adr2 = &lastTime2;
-
-    zakres1_n_1_adr = &zakres1_n_1;
-    zakres1_n_2_adr = &zakres1_n_2;
-    zakres2_n_1_adr = &zakres2_n_1;
-    zakres2_n_2_adr = &zakres2_n_2;
-
-    // Odczyt z ADC // 0.0-3.3V -> 0-4095
-    channel1 = analogRead (ADCPIN_CH1);
-    channel2 = analogRead (ADCPIN_CH2);
-  }
-  else if (joystick_n == 1) {
-    last_time_adr1 = &lastTime3;
-    last_time_adr2 = &lastTime4;
-
-    zakres1_n_1_adr = &zakres3_n_1;
-    zakres1_n_2_adr = &zakres3_n_2;
-    zakres2_n_1_adr = &zakres4_n_1;
-    zakres2_n_2_adr = &zakres4_n_2;
-
-    // Odczyt z ADC // 0.0-3.3V -> 0-4095
-    channel1 = analogRead (ADCPIN_CH3);
-    channel2 = analogRead (ADCPIN_CH4);
-  }
-
+  // Odczyt z ADC // 0.0-3.3V -> 0-4095
+  int16_t rawX = analogRead(joystick->jx_pin);
+  int16_t rawY = analogRead(joystick->jy_pin);
 
   // Wstępne przesunięcie -> pozycja środkowa joysticka = 0
-  channel1 -= MIDPOINT_CH1; // midpoint ~ 1925
-  channel2 -= MIDPOINT_CH2; // midpoint ~ 1870
+  rawX -= joystick->jx_center;
+  rawY -= joystick->jy_center;
 
 
-  // Zerowanie DRIFTu / Strefa Nieczułości -> +-35
-  if (( channel1 >= (-1*DRIFT) ) && ( channel1 <= DRIFT )) {channel1=0;}
-  if (( channel2 >= (-1*DRIFT) ) && ( channel2 <= DRIFT )) {channel2=0;}
+  // Zerowanie DRIFTu / Strefa Nieczułości -> +-drift<CHANNEL>
+  if (( rawX >= (-1*joystick->driftX) ) && ( rawX <= joystick->driftX )) {rawX=0;}
+  if (( rawY >= (-1*joystick->driftY) ) && ( rawY <= joystick->driftY )) {rawY=0;}
 
-  float _zakres1;
-  float _zakres2;
 
   // Skalowanie -> Normalizacja do +-1.0
-  if (channel1 < 0) {
-    channel1 += DRIFT;
-    _zakres1 = (float)channel1 / (MIDPOINT_CH1 - DRIFT); // rzutowanie do float
-  } else if (channel1 > 0) {
-    channel1 -= DRIFT;
-    _zakres1 = (float)channel1 / (ADC_RANGE - MIDPOINT_CH1 - DRIFT);
-  } else {_zakres1 = 0.0;}
+  if (rawX < 0) {
+    rawX += joystick->driftX;
+    x = (float)rawX / (joystick->jx_center - joystick->driftX); // rzutowanie do float
+  } else if (rawX > 0) {
+    rawX -= joystick->driftX;
+    x = (float)rawX / (ADC_RANGE - joystick->jx_center - joystick->driftX);
+  } else {x = 0.0f;}
 
-  if (channel2 < 0) {
-    channel2 += DRIFT;
-    _zakres2 = (float)channel2 / (MIDPOINT_CH2 - DRIFT);
-  } else if (channel2 > 0) {
-    channel2 -= DRIFT;
-    _zakres2 = (float)channel2 / (ADC_RANGE - MIDPOINT_CH2 - DRIFT);
-  } else {_zakres2 = 0.0;}
-
-
-  // Wygładzanie sterowania -> Filtr Dolnoprzepustowy
-  switch (SMOOTHING_MODE) {
-    case 0: {
-      // pass
-      break;
-    }
-    case 1: {
-      // Sprawdzenie czy obecny sygnał nie jest słabszy od poprzedniego
-      unsigned char BREAKING1 = fabs(_zakres1) < fabs(*zakres1_n_1_adr); // |u(n)| < |u(n-1)|
-      unsigned char BREAKING2 = fabs(_zakres2) < fabs(*zakres2_n_1_adr);
-
-      // Przy szybkim hamowaniu -> omiń filtr
-      if (!BREAKING1 || !FAST_BREAK) {
-      _zakres1 = LPF_I(_zakres1, *zakres1_n_1_adr, timeDelta(last_time_adr1), 2.0);
-      }
-      if (!BREAKING2 || !FAST_BREAK) {
-      _zakres2 = LPF_I(_zakres2, *zakres2_n_1_adr, timeDelta(last_time_adr2), 2.0);
-      }
-      
-      // Przesunięcie próbek pod następną iterację
-      *zakres1_n_1_adr = _zakres1;
-      *zakres2_n_1_adr = _zakres2;
-      break;
-    }
-    case 2: {
-      // Sprawdzenie czy obecny sygnał nie jest słabszy od poprzedniego
-      unsigned char BREAKING1 = abs(_zakres1) < abs(*zakres1_n_1_adr); // |u(n)| < |u(n-1)|
-      unsigned char BREAKING2 = abs(_zakres2) < abs(*zakres2_n_1_adr);
-
-      // Przy szybkim hamowaniu -> omiń filtr
-      if (!BREAKING1 || !FAST_BREAK) {
-      _zakres1 = LPF_II(_zakres1, *zakres1_n_1_adr, *zakres1_n_2_adr, timeDelta(&lastTime1), 2.0);
-      }
-      if (!BREAKING2 || !FAST_BREAK) {
-      _zakres2 = LPF_II(_zakres2, *zakres2_n_1_adr, *zakres2_n_2_adr, timeDelta(&lastTime2), 2.0);
-      }
-      
-      // Przesunięcie próbek pod następną iterację
-      *zakres1_n_2_adr = *zakres1_n_1_adr;
-      *zakres1_n_1_adr = _zakres1;
-      *zakres2_n_2_adr = *zakres2_n_1_adr;
-      *zakres2_n_1_adr = _zakres2;
-      break;
-    }
-    default:
-      break;
-  }
+  if (rawY < 0) {
+    rawY += joystick->driftY;
+    y = (float)rawY / (joystick->jy_center - joystick->driftY); // rzutowanie do float
+  } else if (rawY > 0) {
+    rawY -= joystick->driftY;
+    y = (float)rawY / (ADC_RANGE - joystick->jy_center - joystick->driftY);
+  } else {y = 0.0f;}
 
 
   // Aktualizacja zmiennych
-  *zakres1 = _zakres1;
-  *zakres2 = _zakres2;
+  joystick->x = x;
+  joystick->y = y;
 
 
-  // Logowanie danych
-  Serial.print("== Joystick"); Serial.print(joystick_n); Serial.println(" ==");
-  Serial.print("kanał "); Serial.print(2*joystick_n+1); Serial.print(" => sterowanie: "); Serial.print(_zakres1, 3); Serial.print(" | ADC: "); Serial.println(channel1);
-  Serial.print("kanał "); Serial.print(2*joystick_n+2); Serial.print(" => sterowanie: "); Serial.print(_zakres2, 3); Serial.print(" | ADC: "); Serial.println(channel2);
-  Serial.println("+==========+");
-  delay_ms((int)(T*1000)); // 100ms
+  // Opóźnienie wywołania
+  //delay((int)(T*1000)); // T=0.01 -> delay=10ms
 }

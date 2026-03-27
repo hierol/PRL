@@ -1,19 +1,18 @@
-#include <utilsf.h>
-#include <pwm.h>
-#include <joystick.h>
-#include <filtry.h>
+#include "utilsf.h"
+#include "board.h"
+#include "pwm.h"
+#include "joystick.h"
+#include "control.h"
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
-#include <dance.h>
-#include <toolsteer.h>
+#include "dance.h"
+#include "toolsteer.h"
 
 int tryb_robota = 1;
 
-// Inicjalizacja kątów serw
-Arm currentAngle = {{0, 0, 0, 0, 0, 0}};
-
-float zakres1 = 0.0, zakres2 = 0.0;
-float zakres3 = 0.0, zakres4 = 0.0;
+// Instancje joysticka
+Joystick J1;
+Joystick J2;
 
 
 void setup() {
@@ -22,38 +21,18 @@ void setup() {
   pwm_setup();
   dance_setup();
 
+  joystick_init(&J1, ADCPIN_J1X, ADCPIN_J1Y, 45, 45, 1900, 1900); // (*joystick, jx_pin, jy_pin, driftX, driftY, jx_center, jy_center)
+  joystick_init(&J2, ADCPIN_J2X, ADCPIN_J2Y, 45, 45, 1900, 1900);
+
+  control_init();
+
 }
 
 void sterowanieManualne(){
   // Aktualizacja sterowania -> odczyt zadanej prędkości
-  joystick_pos(&zakres1, &zakres2, 0);
-  joystick_pos(&zakres3, &zakres4, 1);
+  joystick_update(&J1);
+  joystick_update(&J2);
 
-  // Konwersja na kąt serwa
-  currentAngle.S[0] += jaw_direction() * 30;  //todo: zmienic zasady clampowania
-  currentAngle.S[1] += head_direction() * 10; //todo: zmienic zasady clampowania
-  currentAngle.S[2] += zakres1 * 10;
-  currentAngle.S[3] += zakres2 * 10;
-  currentAngle.S[4] += zakres3 * 10;
-  currentAngle.S[5] += zakres4 * 10;
-
-  
-  // Ustawienie serw
-  for (int i = 0; i < 6; i++) {
-    servo_move(i, currentAngle.S[i]);
-  }
-
-
-  delay(400);
-}
-
-
-void loop() {
-
-  if (danceMode() == 1){
-    sterowanieManualne();
-  } else {
-    dance();
-  }
+  control_update(&J1, &J2);
 
 }
