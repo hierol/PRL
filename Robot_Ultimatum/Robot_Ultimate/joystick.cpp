@@ -1,12 +1,8 @@
 #include "joystick.h"
 #include <Arduino.h>
-#include <cmath>
 
 
-//static const float T = 0.01f; // okres wywołania [sekundy]
-
-
-void joystick_init(Joystick* joystick, unsigned char jx_pin, unsigned char jy_pin, unsigned char driftX, unsigned char driftY, unsigned int jx_center, unsigned int jy_center) 
+void joystick_init(Joystick* joystick, unsigned char jx_pin, unsigned char jy_pin, unsigned char driftX, unsigned char driftY, unsigned int jx_center, unsigned int jy_center, unsigned char inv_x, unsigned char inv_y) 
 {
   joystick->jx_pin = jx_pin;
   joystick->jy_pin = jy_pin;
@@ -14,6 +10,8 @@ void joystick_init(Joystick* joystick, unsigned char jx_pin, unsigned char jy_pi
   joystick->driftY = driftY;
   joystick->jx_center = jx_center;
   joystick->jy_center = jy_center;
+  joystick->invert_x = inv_x;
+  joystick->invert_y = inv_y;
   joystick->x = 0.0f;
   joystick->y = 0.0f;
 }
@@ -57,11 +55,14 @@ void joystick_update(Joystick* joystick)
   } else {y = 0.0f;}
 
 
+  // Odwracanie osi sterowania
+  if (joystick->invert_x) {x *= -1.0f;}
+  if (joystick->invert_y) {y *= -1.0f;}
+
+
   // Aktualizacja zmiennych
   joystick->x = x;
   joystick->y = y;
 
 
-  // Opóźnienie wywołania
-  //delay((int)(T*1000)); // T=0.01 -> delay=10ms
 }

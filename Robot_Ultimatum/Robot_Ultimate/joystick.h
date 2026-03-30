@@ -6,6 +6,8 @@
 
 
 typedef struct {
+  unsigned char invert_x; // odwróć oś x sterowania {0, 1}
+  unsigned char invert_y; // odwróć oś y sterowania {0, 1}
   unsigned char jx_pin; // pin kanału x
   unsigned char jy_pin; // pin kanału y
   unsigned char driftX; // drift kanału x
@@ -17,7 +19,18 @@ typedef struct {
 } Joystick;
 
 
-void joystick_init(Joystick* joystick, unsigned char jx_pin, unsigned char jy_pin, unsigned char driftX, unsigned char driftY, unsigned int jx_center, unsigned int jy_center); // inicjalizacja stałych
+void joystick_init(
+  Joystick* joystick, // wskaźnik na strukturę danych joysticka
+  unsigned char jx_pin, // pin podłączenia kanału x joysticka
+  unsigned char jy_pin, // pin podłączenia kanału y joysticka
+  unsigned char driftX, // drift kanału x joysticka
+  unsigned char driftY, // drift kanału y joysticka
+  unsigned int jx_center, // wartość średnia kanału x przy braku sterowania
+  unsigned int jy_center, // wartość średnia kanału y przy braku sterowania
+  unsigned char inv_x, // flaga odwrócenia osi x
+  unsigned char inv_y // flaga odwrócenia osi y
+); // inicjalizacja stałych
+
 void joystick_update(Joystick* joystick); // aktualizacja sterowania
 
 
