@@ -11,23 +11,23 @@
 //#define USMAX  2400
 #define SERVO_FREQ 50
 
-#define S0_MIN 150
-#define S0_MAX 600
+#define S0_MIN 190
+#define S0_MAX 540
 
-#define S1_MIN 150
-#define S1_MAX 600
+#define S1_MIN 205
+#define S1_MAX 540
 
-#define S2_MIN 150
-#define S2_MAX 600
+#define S2_MIN 115
+#define S2_MAX 630
 
-#define S3_MIN 150
-#define S3_MAX 600
+#define S3_MIN 125
+#define S3_MAX 625
 
-#define S4_MIN 150
-#define S4_MAX 600
+#define S4_MIN 125
+#define S4_MAX 630
 
-#define S5_MIN 150
-#define S5_MAX 600
+#define S5_MIN 115
+#define S5_MAX 625
 
 
 void pwm_setup();

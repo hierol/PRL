@@ -17,8 +17,8 @@ AngleAcc AngleS0, AngleS1, AngleS2, AngleS3; // Instancje kątów serw // 4 Serw
 AngleAcc AngleS4, AngleS5; // Dwa Serwa Ostateczne // S5->Chwytak
 
 
-static const float si = 0.2f; // small input -> część sterowania która pomija filtr [zakres od 0.0 do 1.0]
-static const float si_btn = 0.2f; // small input dla przycisków
+static const float si = 0.1f; // small input -> część sterowania która pomija filtr [zakres od 0.0 do 1.0]
+static const float si_btn = 0.15f; // small input dla przycisków
 static const float T = 0.01f; // okres wywołania [sekundy]
 
 
