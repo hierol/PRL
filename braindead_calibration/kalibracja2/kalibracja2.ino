@@ -7,6 +7,13 @@
 #define USMAX  2400
 #define SERVO_FREQ 50
 
+#define PIN_CH 25
+#define PIN_1P 26
+#define PIN_10P 19
+#define PIN_1N 27
+#define PIN_10N 18
+
+
 int change = 0;
 
 int cPulse0 = 300;
@@ -30,11 +37,11 @@ void setup() {
   pwm.begin();
   pwm.setPWMFreq(SERVO_FREQ);
 
-  pinMode(25, INPUT_PULLUP); // +1
-  pinMode(33, INPUT_PULLUP); // +10
-  pinMode(26, INPUT_PULLUP); // -1
-  pinMode(27, INPUT_PULLUP); // -10
-  pinMode(32, INPUT_PULLUP); // Zmiana kanału
+  pinMode(PIN_1P, INPUT_PULLUP); // +1
+  pinMode(PIN_10P, INPUT_PULLUP); // +10
+  pinMode(PIN_1N, INPUT_PULLUP); // -1
+  pinMode(PIN_10N, INPUT_PULLUP); // -10
+  pinMode(PIN_CH, INPUT_PULLUP); // Zmiana kanału
 
   for (int j=0; j<=5; j++) {pwm.setPWM(j, 0, 300);}
 
@@ -42,8 +49,8 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  //Serial.println(digitalRead(32));
-  if (digitalRead(27) == LOW) {
+  //Serial.println(digitalRead(PIN_CH));
+  if (digitalRead(PIN_CH) == LOW) {
     c_channel++;
     if (c_channel > 5) {c_channel=0;}
     Serial.print("Kanał serwa zmieniony na "); Serial.println(c_channel);
@@ -51,19 +58,19 @@ void loop() {
   }
 
 
-  if (digitalRead(26) == LOW) {
+  if (digitalRead(PIN_1P) == LOW) {
     change += 1;
     Serial.println(change);
   }
-  else if (digitalRead(25) == LOW) {
+  else if (digitalRead(PIN_10P) == LOW) {
     change += 10;
     Serial.println(change);
   }
-  else if (digitalRead(33) == LOW) {
+  else if (digitalRead(PIN_1N) == LOW) {
     change -= 1;
     Serial.println(change);
   }
-  else if (digitalRead(32) == LOW) {
+  else if (digitalRead(PIN_10N) == LOW) {
     change -= 10;
     Serial.println(change);
   }
@@ -74,31 +81,37 @@ void loop() {
       cPulse0 += change;
       pwm.setPWM(c_channel, 0, cPulse0);
       if(change!=0) {Serial.print("Sygnał serwa "); Serial.print(c_channel); Serial.print(" zmieniony na "); Serial.println(cPulse0);}
+      break;
     }
     case 1: {
       cPulse1 += change;
       pwm.setPWM(c_channel, 0, cPulse1);
       if(change!=0) {Serial.print("Sygnał serwa "); Serial.print(c_channel); Serial.print(" zmieniony na "); Serial.println(cPulse1);}
+      break;
     }
     case 2: {
       cPulse2 += change;
       pwm.setPWM(c_channel, 0, cPulse2);
       if(change!=0) {Serial.print("Sygnał serwa "); Serial.print(c_channel); Serial.print(" zmieniony na "); Serial.println(cPulse2);}
+      break;
     }
     case 3: {
       cPulse3 += change;
       pwm.setPWM(c_channel, 0, cPulse3);
       if(change!=0) {Serial.print("Sygnał serwa "); Serial.print(c_channel); Serial.print(" zmieniony na "); Serial.println(cPulse3);}
+      break;
     }
     case 4: {
       cPulse4 += change;
       pwm.setPWM(c_channel, 0, cPulse4);
       if(change!=0) {Serial.print("Sygnał serwa "); Serial.print(c_channel); Serial.print(" zmieniony na "); Serial.println(cPulse4);}
+      break;
     }
     case 5: {
       cPulse5 += change;
       pwm.setPWM(c_channel, 0, cPulse5);
       if(change!=0) {Serial.print("Sygnał serwa "); Serial.print(c_channel); Serial.print(" zmieniony na "); Serial.println(cPulse5);}
+      break;
     }
   }
   
