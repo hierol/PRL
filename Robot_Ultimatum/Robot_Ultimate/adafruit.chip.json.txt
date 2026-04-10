@@ -1,0 +1,13 @@
+{
+  "name": "adafruit",
+  "author": "Sznaki Beaki",
+  "pins": [
+    "GND","OE",
+    "SCL","SDA",
+    "VCC","V+",
+    "0","1",
+    "2","3",
+    "4","5"
+  ],
+  "controls": []
+}
