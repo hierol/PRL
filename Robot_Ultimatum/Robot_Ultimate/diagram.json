@@ -3,7 +3,7 @@
   "author": "Sznaki Beaki",
   "editor": "wokwi",
   "parts": [
-    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 153.6, "left": 158.44, "attrs": {} },
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 163.2, "left": 168.04, "attrs": {} },
     { "type": "wokwi-analog-joystick", "id": "joystick1", "top": 57, "left": 5.4, "attrs": {} },
     { "type": "wokwi-analog-joystick", "id": "joystick2", "top": 57, "left": -119.4, "attrs": {} },
     {
@@ -35,29 +35,67 @@
       "top": -13,
       "left": 19.2,
       "attrs": { "color": "green", "xray": "1" }
-    }
+    },
+    { "type": "wokwi-vcc", "id": "vcc1", "top": 250.36, "left": -115.2, "attrs": {} },
+    { "type": "chip-adafruit", "id": "chip1", "top": 433.02, "left": 72, "attrs": {} },
+    { "type": "wokwi-gnd", "id": "gnd1", "top": 374.4, "left": -115.8, "attrs": {} },
+    {
+      "type": "wokwi-text",
+      "id": "text1",
+      "top": 422.4,
+      "left": 76.8,
+      "attrs": { "text": "GND" }
+    },
+    { "type": "wokwi-text", "id": "text2", "top": 432, "left": 76.8, "attrs": { "text": "OE" } },
+    {
+      "type": "wokwi-text",
+      "id": "text3",
+      "top": 441.6,
+      "left": 76.8,
+      "attrs": { "text": "SCL" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "text4",
+      "top": 451.2,
+      "left": 76.8,
+      "attrs": { "text": "SDA" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "text5",
+      "top": 460.8,
+      "left": 76.8,
+      "attrs": { "text": "VCC" }
+    },
+    { "type": "wokwi-text", "id": "text6", "top": 470.4, "left": 76.8, "attrs": { "text": "V+" } }
   ],
   "connections": [
     [ "esp:TX", "$serialMonitor:RX", "", [] ],
     [ "esp:RX", "$serialMonitor:TX", "", [] ],
     [ "joystick1:GND", "joystick2:GND", "black", [ "v9.6", "h-172.8" ] ],
-    [ "sw2:2", "joystick2:GND", "black", [ "v-9.6", "h-96.1", "v-67.2" ] ],
     [ "esp:34", "joystick2:VERT", "green", [ "h0" ] ],
     [ "esp:35", "joystick2:HORZ", "green", [ "h-230.25" ] ],
     [ "esp:32", "joystick1:VERT", "green", [ "h-9.45", "v-38.4", "h-211.2" ] ],
     [ "esp:33", "joystick1:HORZ", "green", [ "h-19.05", "v-38.4", "h-192" ] ],
-    [ "sw2:3", "esp:27", "gold", [ "h-0.2", "v-28.8" ] ],
-    [ "sw1:1", "esp:14", "orange", [ "v-19.2", "h201.6" ] ],
-    [ "esp:25", "joystick1:SEL", "violet", [ "h-95.85", "v-76.8" ] ],
-    [ "esp:26", "joystick2:SEL", "violet", [ "h0" ] ],
-    [ "sw1:2", "joystick2:GND", "black", [ "v-9.6", "h-0.1" ] ],
     [ "joystick2:GND", "btn1:2.r", "black", [ "v9.6", "h38.4", "v-173" ] ],
     [ "btn2:2.l", "btn1:2.r", "black", [ "h0" ] ],
-    [ "btn1:1.r", "esp:19", "gray", [ "v-19.2", "h317", "v268.8" ] ],
-    [ "btn2:1.r", "esp:18", "gray", [ "h211.4", "v259.2" ] ],
-    [ "esp:5V", "joystick1:VCC", "red", [ "h-28.65", "v-163.2", "h-96" ] ],
     [ "joystick1:VCC", "joystick2:VCC", "red", [ "v19.2", "h-124.8" ] ],
-    [ "esp:CMD", "sw2:2", "black", [ "h-9.45", "v-48", "h-105.5" ] ]
+    [ "esp:CMD", "sw2:2", "black", [ "h-9.45", "v-57.6", "h-115.1" ] ],
+    [ "btn1:1.r", "esp:27", "gray", [ "v-19.2", "h144.2", "v297.6" ] ],
+    [ "btn2:1.r", "esp:26", "gray", [ "h38.6", "v268.8" ] ],
+    [ "joystick2:SEL", "esp:18", "violet", [ "v105.6", "h48", "v115.2", "h307.2", "v-124.8" ] ],
+    [ "joystick1:SEL", "esp:19", "violet", [ "v105.6", "h-67.2", "v105.6", "h288", "v-124.8" ] ],
+    [ "esp:25", "sw2:3", "#8f4814", [ "h-124.45" ] ],
+    [ "sw2:2", "joystick1:GND", "black", [ "v-9.6", "h28.7" ] ],
+    [ "esp:3V3", "joystick1:VCC", "red", [ "h-19.05", "h-115.2" ] ],
+    [ "vcc1:VCC", "sw1:2", "#8f4814", [ "v19.2", "h19.2", "h38.5" ] ],
+    [ "sw1:1", "esp:5V", "#8f4814", [ "v-9.6", "h57.6", "v57.6" ] ],
+    [ "gnd1:GND", "esp:CMD", "black", [ "v-19.2", "h278.25" ] ],
+    [ "gnd1:GND", "chip1:GND", "black", [ "v-19.2", "h115.2", "v86.4" ] ],
+    [ "sw1:1", "chip1:VCC", "#8f4814", [ "v-9.6", "h57.6", "v182.4" ] ],
+    [ "esp:21", "chip1:SDA", "gold", [ "h57.6", "v172.8", "h-278.4", "v57.6" ] ],
+    [ "esp:22", "chip1:SCL", "gold", [ "h67.2", "v211.2", "h-278.4", "v38.4" ] ]
   ],
   "dependencies": {}
 }
