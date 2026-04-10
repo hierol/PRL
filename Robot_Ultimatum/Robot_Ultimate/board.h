@@ -7,11 +7,11 @@
 #define ADCPIN_J2X 32
 #define ADCPIN_J2Y 33
 
-#define LeftBumper 19
-#define RightBumper 18
-#define LeftJoystick 26
-#define RightJoystick 25
+#define LeftBumper 27
+#define RightBumper 26
+#define LeftJoystick 18
+#define RightJoystick 19
 
-#define DANCE_MODE_PIN 18 //randomowy pin
+#define DANCE_MODE_PIN 25 //randomowy pin
 
 #endif
