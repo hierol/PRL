@@ -22,7 +22,7 @@ void setup() {
   dance_setup();
 
   joystick_init(&J1, ADCPIN_J1X, ADCPIN_J1Y, 80, 80, 1916, 1872, 0, 0); // (*joystick, jx_pin, jy_pin, driftX, driftY, jx_center, jy_center, inv_x, inv_y)
-  joystick_init(&J2, ADCPIN_J2X, ADCPIN_J2Y, 80, 80, 1883, 1845, 0, 0);
+  joystick_init(&J2, ADCPIN_J2X, ADCPIN_J2Y, 80, 80, 1883, 1845, 0, 1);
   toolsteer_setup();
 
   control_init();
